@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Image } from 'react-native';
+import { View, Text,TextInput,Image,SafeAreaView } from 'react-native';
 import Header from '../../components/Header'
-import { ScrollView } from 'react-native-gesture-handler';
-import {main_logo} from '../../assets/icons'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import {main_logo,next,checkicon} from '../../assets/icons'
 import { YellowBtn } from '../../components/Button'
 import { BlurView, VibrancyView } from "@react-native-community/blur";
+import Modal from 'react-native-modal'
 
-const NewHeader = ()=>(
+const NewHeader = ({back})=>(
     <View>
-        <Header />
+        <Header back={back} />
         <View style={{
             position: 'absolute',
-            top: 60,
+            top: 20,
             right: 8,
             backgroundColor: '#FFF529',
             paddingHorizontal:16,
@@ -28,6 +29,7 @@ const NewHeader = ()=>(
         </View>
     </View>
 )
+
 
 const Input = ({price, label, text}) => (
     <View
@@ -124,15 +126,17 @@ class RequestWorkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        visible: false
+        visible: false,
+        modalVisible: false
     };
   }
 
   render() {
-      const { visible}  = this.state
+      const { visible,modalVisible}  = this.state
     return (
-      <View style={{
-          flex: 1
+      <SafeAreaView style={{
+          flex: 1,
+          backgroundColor: '#fff',
       }}>
          { visible? 
          <BlurView
@@ -165,7 +169,7 @@ class RequestWorkout extends Component {
               </View>
           </View></BlurView> : null}
           <ScrollView>
-        <NewHeader />
+        <NewHeader back={()=>{this.props.navigation.goBack()}}/>
         <View style={{
             marginHorizontal: '10%',
             marginTop: '5%'
@@ -189,12 +193,66 @@ class RequestWorkout extends Component {
         }}>
             <YellowBtn onpress={()=>{
                 this.setState({
-                    visible: true
+                    //visible: true,
+                    modalVisible: true
                 })
             }} text='Отправить запрос' />
         </View>
         </ScrollView>
-      </View>
+        <Modal isVisible={modalVisible} 
+            backdropColor='#fff'
+            backdropOpacity={0.9}>
+              <View style={{
+                height: '70%',
+                marginHorizontal: '4%',
+                shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            backgroundColor: '#fff'
+              }}>
+                <TouchableOpacity onPress={()=>{this.setState({modalVisible: false})}}>
+                <Image source={next} style={{
+                  width:24,
+                  height: 16,
+                  resizeMode:'contain',
+                  transform: [{ rotate: '180deg' }],
+                  margin: 10,
+                }} />
+                </TouchableOpacity>
+                <View style={{
+                  alignSelf:'center',
+                  width: 140,
+                  height:140,
+                  borderWidth:1,
+                  borderRadius: 100,
+                  justifyContent:'center',
+                  alignItems:'center',
+                  marginTop: 20
+                }}>
+                  <Image source={checkicon} style={{
+                    width:64,
+                    height:64,
+                    resizeMode:'contain'
+                  }}/>
+                </View>
+                <Text style={{
+                  textAlign:'center'
+                }}>Спасибо!{'\n'}Ваш запрос успешно {'\n'}опубликован</Text>
+                <View style={{
+                  position:'absolute',
+                  width:'100%',
+                  bottom: 10
+                }}>
+                <YellowBtn text='Мои запросы' />
+                </View>
+              </View>
+            </Modal>
+      </SafeAreaView>
     );
   }
 }

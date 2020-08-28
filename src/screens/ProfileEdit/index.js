@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, SafeAreaView } from 'react-native';
 import Header from '../../components/Header';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import {YellowBtn} from '../../components/Button'
-import {basket} from '../../assets/icons'
+import {basket,checkicon} from '../../assets/icons'
+import {avatar} from '../../assets/img'
 
 const Card =()=>(
     <View style={{
@@ -32,11 +33,12 @@ class ProfileEdit extends Component {
   }
 
   render() {
+    const {navigation} = this.props
     return (
-      <View style={{
+      <SafeAreaView style={{
           flex: 1
       }}>
-          <Header />
+          <Header back={()=>{navigation.goBack()}} />
           <View style={{
               flexDirection: 'row',
               marginTop: '5%',
@@ -47,7 +49,13 @@ class ProfileEdit extends Component {
                   height: 86,
                   width: 86,
                   borderRadius: 9
-              }}></View>
+              }}>
+                <Image source={avatar} style={{
+                  width: 86,
+                  height: 86,
+                  resizeMode:'cover',borderRadius: 9
+                }}/>
+              </View>
               <View style={{
                   borderWidth: 1,
                   width: '70%',
@@ -144,7 +152,7 @@ class ProfileEdit extends Component {
               borderWidth: 1,
               borderColor: '#242424',
               borderRadius: 30,
-              paddingVertical: 20,
+              paddingVertical: 13,
               justifyContent: 'center',
               alignItems:'center',
               marginBottom: '5%'
@@ -152,8 +160,9 @@ class ProfileEdit extends Component {
               <Text>Отменить редактирование</Text>
           </TouchableOpacity>
           </View>
-          <YellowBtn />
-      </View>
+          <YellowBtn text={'Сохранить'} icon iconName={checkicon}/>
+          
+      </SafeAreaView>
     );
   }
 }

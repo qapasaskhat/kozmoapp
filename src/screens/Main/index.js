@@ -21,7 +21,8 @@ import {basket} from '../../assets/icons';
 import SearchInput from '../../components/SearchInput';
 import Geolocation from '@react-native-community/geolocation';
 import Modal, {ModalContent, ModalTitle} from 'react-native-modals';
-
+import Inst from './Coach'
+import FavoritesClass from './Favorites'
 const {height, width} = Dimensions.get('screen');
 
 const mapStyle = [
@@ -242,8 +243,9 @@ const Sport = () => {
     </View>
   );
 };
-const CreateTraining = () => (
+const CreateTraining = ({onpress}) => (
   <TouchableOpacity
+    onPress={onpress}
     style={{
       position: 'absolute',
       //paddingVertical: 12,
@@ -362,10 +364,11 @@ class Main extends React.Component {
                 backgroundColor: '#fff',
               }}>
               {/* <SearchInput /> */}
-              <Swiper
+              {/* <Swiper
                 check={this.state.check}
                 button={() => this.setState({check: !this.state.check})}
-              />
+              /> */}
+              <FavoritesClass />
             </ModalContent>
           </Modal.BottomModal>
 
@@ -383,7 +386,7 @@ class Main extends React.Component {
               }}
             />
           )}
-          <CreateTraining />
+          <CreateTraining onpress={()=>{ this.props.navigation.navigate('RequestWorkout') }} />
           {this.state.show && <Locale />}
           {this.state.show && <Menu />}
           {this.state.show && (

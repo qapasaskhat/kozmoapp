@@ -1,7 +1,7 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack'
 import tabs from '../TabNavigator'
-import Profile from '../../screens/Profile'
+import {Profile,ProfileEdit,UserCard,UserFaq,RequestWorkout} from '../../screens'
 
 const stack = createStackNavigator({
     Main: {
@@ -9,7 +9,11 @@ const stack = createStackNavigator({
     },
     Profile:{
         screen: Profile
-    }
+    },
+    ProfileEdit,
+    UserCard,
+    UserFaq,
+    RequestWorkout
 },{
     headerMode: 'none'
 })

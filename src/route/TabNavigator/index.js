@@ -1,9 +1,7 @@
 import { createBottomTabNavigator, BottomTabBar,createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import React from 'react'
 import { Image } from 'react-native'
-import Main from '../../screens/Main'
-import Favorites from '../../screens/Favorites'
-import Workouts from '../../screens/Workouts'
+import { Main, Favorites, Workouts } from '../../screens'
 import { main_logo, workout, favorite } from '../../assets/icons'
 
 export const Tabs = createMaterialTopTabNavigator({

@@ -24,6 +24,7 @@ const YellowBtn = ({text, onPress, icon, iconName,}) => {
             position: 'absolute',
             right: '10%',
             tintColor: '#242424',
+            fontFamily: 'SFProDisplay-Regular',
           }}
         />
       )}
