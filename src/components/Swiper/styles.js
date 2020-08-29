@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     },
     slide1: {
       height: '100%',
-      paddingHorizontal: '5%'
+      paddingHorizontal: '5%',
     },
     title:{
         fontSize: 19,

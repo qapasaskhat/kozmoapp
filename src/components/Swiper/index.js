@@ -11,52 +11,50 @@ import styles from './styles';
 import {share, right, checkicon} from '../../assets/icons/index';
 import {img_ava} from '../../assets/img/index';
 
-const ButtonBox = ({
-    onPressBox,
-    check
-})=>{
-    return(
-        <View
+const ButtonBox = ({onPressBox, check}) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 16,
+      }}>
+      <View
         style={{
+          width: 46,
+          height: 46,
+          borderRadius: 40,
+          backgroundColor: '#fff',
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      />
+      <TouchableOpacity
+        onPress={onPressBox}
+        style={{
+          width: 240,
+          height: 46,
+          backgroundColor: '#FFF529',
+          borderRadius: 38,
+          justifyContent: 'space-around',
           flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 16,
+          alignItems: 'center',
         }}>
-        <View
-          style={{
-            width: 46,
-            height: 46,
-            borderRadius: 40,
-            backgroundColor: '#fff',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-        <TouchableOpacity onPress={onPressBox}
-          style={{
-            width: 240,
-            height: 46,
-            backgroundColor: '#FFF529',
-            borderRadius: 38,
-            justifyContent: 'space-around',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Text>{check ?'Отменить тренировку':'Присоедениться'}</Text>
-          {check === false &&  <Text>2000 T</Text>}
-        </TouchableOpacity>
-      </View>
-    )
-}
-const Slider1 = ({check,button}) => {
+        <Text>{check ? 'Отменить тренировку' : 'Присоедениться'}</Text>
+        {check === false && <Text>2000 T</Text>}
+      </TouchableOpacity>
+    </View>
+  );
+};
+const Slider1 = ({check, button}) => {
   return (
     <View style={styles.slide1}>
       <View
@@ -65,7 +63,7 @@ const Slider1 = ({check,button}) => {
           justifyContent: 'space-between',
         }}>
         <View style={{flexDirection: 'row'}}>
-        {check && <Image source={checkicon} style={styles.check} />}
+          {check && <Image source={checkicon} style={styles.check} />}
           <Text style={styles.title}>Велотренировка</Text>
           <Image
             source={share}
@@ -111,7 +109,8 @@ const Slider1 = ({check,button}) => {
           }}>
           ул.Габдуллина, д. 132, подъезд 2
         </Text>
-        <TouchableOpacity
+        <TouchableOpacity 
+        onPress={()=>{alert('hheelloo')}}
           style={{
             backgroundColor: '#eee',
             width: 40,
@@ -178,7 +177,7 @@ const Slider1 = ({check,button}) => {
           <View style={styles.icon_view} />
         </View>
       </View>
-      <ButtonBox onPressBox={button} check={check}/>
+      <ButtonBox onPressBox={button} check={check} />
     </View>
   );
 };
@@ -191,7 +190,7 @@ const Slider2 = ({check}) => {
           justifyContent: 'space-between',
         }}>
         <View style={{flexDirection: 'row'}}>
-           {check && <Image source={checkicon} style={styles.check} />}
+          {check && <Image source={checkicon} style={styles.check} />}
           <Text style={styles.title}>Велотренировка</Text>
           <Image
             source={share}
@@ -262,7 +261,7 @@ const Slider3 = ({check}) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-           {check && <Image source={checkicon} style={styles.check} />}
+        {check && <Image source={checkicon} style={styles.check} />}
         <Text style={styles.title}>Велотренировка</Text>
         <View style={styles.reviewBtn}>
           <Text>Оставить отзыв</Text>
@@ -354,17 +353,33 @@ const Slider3 = ({check}) => {
   );
 };
 
-const Swip = ({
-    check,
-    button
-}) => {
-  return (
-    <Swiper style={styles.wrapper} showsButtons>
-      <Slider1 check={check} button={button}/>
-      <Slider2 check={check} />
-      <Slider3 check={check} />
-    </Swiper>
-  );
-};
+class Swip extends React.Component {
+  state = {
+    auto: true,
+  };
+  render() {
+    const {check, button} = this.props;
+    return (
+      <Swiper
+        style={styles.wrapper}
+        removeClippedSubviews={false}
+        //autoplay={this.state.auto} onIndexChanged={(index)=>{index===0&& this.setState({auto: false})}}
+      >
+        <Slider1 check={check} button={button} />
+        <Slider2 check={check} />
+        <Slider3 check={check} />
+      </Swiper>
+    );
+  }
+}
+
+// const Swip = ({
+//     check,
+//     button
+// }) => {
+//   return (
+
+//   );
+// };
 
 export default Swip;

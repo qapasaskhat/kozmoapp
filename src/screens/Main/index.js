@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import styles from './styles';
+import {connect} from 'react-redux'
 import Switch from '../../components/Switch';
 import Profile from '../../components/Profile';
 import Search from '../../components/Search';
@@ -15,15 +15,18 @@ import Locale from '../../components/Location';
 import Menu from '../../components/Menu';
 import MapView, {Marker, Callout} from 'react-native-maps';
 import ItemMarker from '../../components/ItemCard';
-import Coach from '../../components/CoachCard';
 import Swiper from '../../components/Swiper';
-import {basket} from '../../assets/icons';
+import {basket, main_logo, favorite, workout} from '../../assets/icons';
 import SearchInput from '../../components/SearchInput';
 import Geolocation from '@react-native-community/geolocation';
-import Modal, {ModalContent, ModalTitle} from 'react-native-modals';
-import Inst from './Coach'
 import FavoritesClass from './Favorites'
+import Workouts from './Workouts' 
+import Animated from 'react-native-reanimated';
+import BottomSheet from 'reanimated-bottom-sheet';
+import {createBottomTabNavigator} from 'react-navigation-tabs'
+
 const {height, width} = Dimensions.get('screen');
+
 
 const mapStyle = [
   {
@@ -267,9 +270,13 @@ const CreateTraining = ({onpress}) => (
     </Text>
   </TouchableOpacity>
 );
+const bs = React.createRef()
+
 class Main extends React.Component {
-  state = {
-    show: true,
+  constructor(props) {
+    super(props);
+    this.state = {
+      show: true,
     check: false,
     coordinate: {
       latitude: 0,
@@ -279,7 +286,8 @@ class Main extends React.Component {
     longitude: 0,
     load: false,
     bottomModalAndTitle: false,
-  };
+    };
+  }
   componentDidMount = () => {
     Geolocation.getCurrentPosition((info) => {
       this.setState({
@@ -294,19 +302,46 @@ class Main extends React.Component {
         load: false,
       });
     });
-  };
+  }
+  renderContent = () => (
+    <View
+      style={{
+        backgroundColor: 'white',
+        padding: 16,
+        height: '100%',
+      }}>
+      <Swiper />
+    </View>
+  );
+  renderHeader=()=>(
+    <TouchableOpacity onPress={()=>{bs.current.snapTo(2)}} 
+      style={{
+          width: width,
+          backgroundColor:'#fff',
+          alignItems: 'center',
+          height:40,
+          justifyContent: 'center'
+          }}>
+      <View style={{width:50,height: 5,backgroundColor:'#e1e1e1',borderRadius: 5}} />
+    </TouchableOpacity>
+  )
+
   onPressMarker = (e) => {
     this.setState({
       show: false,
     });
   };
-
+   fall = new Animated.Value(1)
+  
   render() {
-    const {latitude, longitude, load, show, bottomModalAndTitle} = this.state;
+    const {latitude, longitude, load } = this.state;
     let myMap;
+    const { workoutView,initial } = this.props
     return (
       <>
-        <View style={StyleSheet.absoluteFillObject}>
+        <Animated.View style={[StyleSheet.absoluteFillObject,{
+          //opacity: Animated.add(0.1,Animated.multiply(this.fall,1.0))
+        }]}>
           {load === false && (
             <MapView
               provider="google"
@@ -327,51 +362,28 @@ class Main extends React.Component {
                 anchor={{x: 0, y: 1}}
                 style={{flexDirection: 'row', alignItems: 'center'}}
                 key={`marker + ${Math.random()}`}
-                onPress={(e) => {
-                  //this._panel.show();
-                  myMap.fitToCoordinates(
-                    [{latitude: latitude, longitude: longitude}],
-                    {
-                      animated: true,
-                    },
-                  );
-                  this.setState({
-                    show: false,
-                    bottomModalAndTitle: true,
-                  });
-                }}>
+                onPress={(e) => bs.current.snapTo(1)
+              }>
                 <ItemMarker />
-                {show ? <SportCard /> : <Sport />}
+                {/* {show ? <SportCard /> : <Sport />} */}
               </Marker.Animated>
             </MapView>
           )}
-          <Modal.BottomModal
-            visible={this.state.bottomModalAndTitle}
-            onTouchOutside={() =>
-              this.setState({bottomModalAndTitle: false, show: true})
-            }
-            onSwipeOut={() =>
-              this.setState({bottomModalAndTitle: false, show: true})
-            }
-            width={1}
-            height={0.7}
-            //swipeDirection={['up','down']} // can be string or an array
-            //swipeThreshold={200} // default 100
-            modalTitle={<Text style={{textAlign:'center'}}>close</Text>}>
-            <ModalContent
-              style={{
-                flex: 1,
-                backgroundColor: '#fff',
-              }}>
-              {/* <SearchInput /> */}
-              {/* <Swiper
-                check={this.state.check}
-                button={() => this.setState({check: !this.state.check})}
-              /> */}
-              <FavoritesClass />
-            </ModalContent>
-          </Modal.BottomModal>
-
+          <BottomSheet
+            ref={bs}
+            snapPoints={['80%','50%',0]}
+            initialSnap={2}
+            callbackNode={this.fall}
+            renderContent={this.renderContent}
+             enabledGestureInteraction={true}
+             enabledHeaderGestureInteraction={true}
+             enabledContentGestureInteraction={false}
+             enabledInnerScrolling={true}
+             enabledContentTapInteraction={true}
+             enabledManualSnapping={false}
+             renderHeader={this.renderHeader}
+             borderRadius={30}
+        />
           {this.state.show && (
             <Profile
               onPress={() => {
@@ -392,10 +404,61 @@ class Main extends React.Component {
           {this.state.show && (
             <Switch text={'Групповые'} text_2={'Индивидуальные'} />
           )}
-        </View>
+        </Animated.View>
       </>
     );
   }
 }
-
-export default Main;
+const MainTabs = createBottomTabNavigator({
+  FavoritesClass:{
+    screen: FavoritesClass,
+    navigationOptions:{
+      tabBarOnPress:()=>{
+        bs.current.snapTo(1)
+      },
+      tabBarIcon: ({tintColor})=>
+      <Image source={favorite} style={{width:24,height: 24, tintColor: '#fff',resizeMode: 'contain'}} />
+    }
+  },
+  Main: {
+    screen: Main,
+    navigationOptions:{
+      tabBarOnPress:()=>{},
+      tabBarIcon: ({tintColor})=>
+      <Image source={main_logo} style={{width:24,height: 24, tintColor: '#fff',resizeMode: 'contain'}} />
+    }
+  },
+  Workouts:{
+    screen: Workouts,
+    navigationOptions:{
+      tabBarOnPress:()=>{},
+      tabBarIcon: ({tintColor})=>
+      <Image source={workout} style={{width:24,height: 24, tintColor: '#fff',resizeMode: 'contain'}} />
+    }
+  }
+},{
+  tabBarOptions:{
+    tabStyle:{
+      backgroundColor:'#000',
+            marginBottom: '-9%',
+            borderWidth:6,
+            borderTopColor: '#000',
+            //borderTopColor: 'red',
+            paddingBottom: '5%'
+    },
+    labelPosition: 'below-icon',
+    labelStyle:{
+      color: '#fff',
+      fontSize: 13,
+      //marginBottom:'5%',
+  },
+  }
+})
+const mapStateToProps = (state) =>({
+  workoutView: state.appReducer.workoutView,
+  initial: state.appReducer.initial
+})
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+});
+export default connect(mapStateToProps,mapDispatchToProps) (MainTabs)

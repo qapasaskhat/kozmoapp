@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet,Image } from 'react-native';
-import {img_ava,image} from '../../../assets/img'
+import {img_ava,image,avatar} from '../../../assets/img'
 import {velo,star} from '../../../assets/icons'
 
 class Coach extends Component {
@@ -19,13 +19,15 @@ class Coach extends Component {
             <Text style={{color: '#fff'}}>9.1</Text>
         </View>
         <View style={styles.cart}>
-            <Image style={img_ava} style={styles.imgAva} />
+            <Image style={avatar} style={styles.imgAva} />
             <Text style={styles.h1}>Таёкина {'\n'}
                     Алина {'\n'}
                     Сергеевна</Text>
             <Text style={[styles.h1,{color: '#838383'}]}>27 лет</Text>
         </View>
-        <View>
+        <View style={{flexDirection:'row'}} >
+            <Image source={image} style={styles.img} />
+            <Image source={image} style={styles.img} />
             <Image source={image} style={styles.img} />
         </View>
       </View>
@@ -46,7 +48,8 @@ const styles = StyleSheet.create({
     },
     ratingIcon:{
         width:16,
-        height:16
+        height:16,
+        tintColor:'#fff'
     },
     rating:{
         width: 40,
@@ -56,10 +59,13 @@ const styles = StyleSheet.create({
         right: 4,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius:16
+        borderRadius:16,
+        backgroundColor:'#000',
+        flexDirection:'row'
     },
     cart:{
         flexDirection:'row',
+        marginTop: 10
     },
     imgAva:{
         height: 86,
@@ -71,7 +77,8 @@ const styles = StyleSheet.create({
         height:76,
         width:76,
         borderRadius: 6,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        marginRight: 6
     }
 })
 

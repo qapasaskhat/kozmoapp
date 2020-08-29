@@ -1,32 +1,7 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from 'react-native'
-import { img_ava } from '../../../assets/img'
-import { star, profile, velo } from '../../../assets/icons'
-
-const Subscriptions=({})=>(
-    <View style={{
-        width:150,
-        height: 100,
-        borderRadius: 11,
-        backgroundColor: '#FFF614',
-        paddingLeft: 5,
-        justifyContent:'space-around',
-        marginVertical:10,
-        marginRight:20
-    }}>
-        <View>
-        <Text>Велотренировка</Text>
-        <Text>пн</Text>
-        </View>
-        <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-            <Image source={velo} style={{
-                width:25, height:20,resizeMode:'contain'
-            }} />
-            <Text style={{textAlign:'center'}}>15<Text>{'\n'}тренировок</Text></Text>
-        </View>
-
-    </View>
-)
+import React, { Component } from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import {img_ava} from '../../../assets/img'
+import {star,profile} from '../../../assets/icons'
 
 const Favorites =({item})=>(
     <View style={styles.view}>
@@ -57,39 +32,21 @@ const Favorites =({item})=>(
     </View>
 )
 
-class FavoritesClass extends React.Component{
-    state={
-        items:[
-            {
-                id: 1,
-                time: '08:00',
-                price: 2000,
-                rating: '9.0',
-                title: 'Велотренировка',
-                address: 'ул.Габдуллина, д. 132'
-            }
-        ]
-    }
-    render() {
-        const {items} = this.state
-        const {title, subscribe} = this.props
-      return (
-        <View style={styles.conatiner}>
-            <Text style={styles.h1}>{title}</Text>
-           
-           <View style={{flexDirection: 'row'}}>
-                { subscribe && [{},{}].map(item=>(
-                    <Subscriptions />
-                ))}
-            </View>
-            {
-                items.map(item=>(
-                    <Favorites item={item} />
-                ))
-            }
-        </View>
-      )
+class index extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
     };
+  }
+
+  render() {
+    const {title} = this.props
+    return (
+      <View style={styles.conatiner}> 
+       <Text style={styles.h1}>{title}</Text>
+      </View>
+    );
+  }
 }
 const styles = StyleSheet.create({
     conatiner: {
@@ -153,4 +110,4 @@ const styles = StyleSheet.create({
         flexDirection:'row',
     }
 })
-export default FavoritesClass
+export default index;

@@ -10,7 +10,7 @@ import { menu } from '../../assets/icons/index'
 
 const Menu = ({menupress})=>{
     return(
-        <TouchableOpacity style={[styles.container,{bottom: '10%'}]} onPress={menupress}>
+        <TouchableOpacity style={[styles.container,{bottom: 65}]} onPress={menupress}>
             <Image source={menu} style={styles.icon} />
         </TouchableOpacity>
     )

@@ -5,7 +5,7 @@ import { search } from '../../assets/icons'
 
 const Search = ({value,searchPress}) => {
   return (
-    <TouchableOpacity onPress={searchPress} style={[styles.container,{bottom: value? '56%':10,}]}>
+    <TouchableOpacity onPress={searchPress} style={[styles.container,{bottom: value? '56%':15,}]}>
       <Image source={search} style={styles.icon}/>
     </TouchableOpacity>
   );

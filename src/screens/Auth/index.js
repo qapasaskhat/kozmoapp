@@ -75,7 +75,9 @@ export default class Auth extends Component {
             bottom: '10%',
             width: '100%',
           }}>
-          <YellowBtn text="Войти" />
+          <YellowBtn text="Войти" onPress={()=>{
+            this.props.navigation.navigate('Main')
+          }}/>
           <GrayBtn text="Регистрация" onPress={()=>{
             this.props.navigation.navigate('Register')
           }} />

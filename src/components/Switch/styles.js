@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-evenly',
         right: 20,
-        top: '6%'
+        top: 20
     },
     active_btn:{
         backgroundColor: '#000',

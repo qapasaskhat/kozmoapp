@@ -3,7 +3,7 @@ const styles = StyleSheet.create({
     container:{
         position: 'absolute',
         right: '5%',
-        bottom: '20%',
+        bottom: 115,
         height: 40,
         width: 40,
         borderRadius: 11,
