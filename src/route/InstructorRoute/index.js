@@ -109,6 +109,7 @@ const Tabs = createBottomTabNavigator({
         }
     }
 },{
+    initialRouteName:'Cabinet',
     defaultNavigationOptions:{
         
     },

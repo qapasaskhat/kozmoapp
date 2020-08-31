@@ -1,18 +1,76 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import Logo from '../../components/Logo';
 import {TextInput, ScrollView} from 'react-native-gesture-handler';
 import {YellowBtn, GrayBtn} from '../../components/Button/index';
+import axios from 'axios'
+import {apiUri} from '../../api'
+import Modal from 'react-native-modal'
+
 export default class Auth extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      phone: '87007007070',
+      password: '12345678',
+      loading: false
+    };
+
+  }
+  _login=()=>{
+    var axios = require('axios');
+    var FormData = require('form-data');
+    var data = new FormData();
+    data.append('phone', this.state.phone);
+    data.append('password', this.state.password);
+    this.setState({
+      loading: true
+    })
+    var config = {
+      method: 'post',
+      url: `${apiUri}login`,
+      headers: { 
+        'Accept': 'application/json', 
+      },
+      data : data
+    };
+
+    axios(config)
+    .then( (response)=> {
+      console.log(JSON.stringify(response.data));
+      this.setState({
+        loading: false
+      })
+      response.data.role === 'coach' && this.props.navigation.navigate('InstMain')
+    })
+    .catch( (error)=> {
+      console.warn(error)
+      this.setState({
+        loading: false
+      })
+      Alert.alert(
+        "Ошибка входа",
+        error.message,
+        [
+          { text: "OK", onPress: () => console.log("OK Pressed"),style: "cancel" }
+        ],
+        { cancelable: false }
+      );
+    });
+
   }
 
   render() {
+    const { phone, password, loading } = this.state
     return (
       <>
         <ScrollView>
+          <Modal  
+            isVisible={loading}
+            backdropColor='#fff'
+            backdropOpacity={0.9}>
+            <ActivityIndicator />
+          </Modal>
           <Logo />
           <Text
             style={{
@@ -31,7 +89,11 @@ export default class Auth extends Component {
             <TextInput
               placeholder="Телефон / Email"
               placeholderTextColor="#000"
+              value={phone}
               textAlign="center"
+              onChangeText={(text)=>this.setState({
+                phone: text
+              })}
               style={{
                 borderBottomColor: '#D0D0D0',
                 borderBottomWidth: 1,
@@ -43,6 +105,10 @@ export default class Auth extends Component {
               placeholder="Пароль"
               placeholderTextColor="#000"
               textAlign="center"
+              value={password}
+              onChangeText={(text)=>this.setState({
+                password: text
+              })}
               style={{
                 borderBottomColor: '#D0D0D0',
                 borderBottomWidth: 1,
@@ -76,7 +142,7 @@ export default class Auth extends Component {
             width: '100%',
           }}>
           <YellowBtn text="Войти" onPress={()=>{
-            this.props.navigation.navigate('Main')
+            this._login()
           }}/>
           <GrayBtn text="Регистрация" onPress={()=>{
             this.props.navigation.navigate('Register')
