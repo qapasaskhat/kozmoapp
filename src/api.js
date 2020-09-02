@@ -1,1 +1,1 @@
-export const apiUri = 'http://149.28.236.213/api/'
+export const apiUri = 'https://lepapp.com/api/'

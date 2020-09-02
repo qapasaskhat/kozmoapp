@@ -1,26 +1,53 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity,SafeAreaView } from 'react-native';
 import Header from '../../../components/Header'
 import { FlatList } from 'react-native-gesture-handler';
 import { YellowBtn } from '../../../components/Button'
 import {basket,edit,profile} from '../../../assets/icons'
+import { connect } from 'react-redux'
 
 class Workout extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        trainings:[]
     };
   }
+  componentDidMount=()=>{
+      this.getTrainigs()
+  }
+  getTrainigs =()=>{
+    var axios = require('axios');
 
+    var config = {
+      method: 'get',
+      url: 'https://lepapp.com/api/coach/trainings',
+      headers: { 
+        'Authorization': `Bearer ${this.props.token}`
+      }
+    };
+    
+    axios(config)
+    .then( (response)=> {
+        this.setState({
+            trainings: response.data
+        })
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
   render() {
       const { navigation } = this.props
+      const { trainings } = this.state
     return (
-      <View style={{
+      <SafeAreaView style={{
           flex: 1
       }}>
           <Header right />
           <FlatList 
-            data={[{},{},{},{},{},{},{}]}
+            data={trainings}
             style={{
                 marginHorizontal: '10%',
                 marginTop: '5%',
@@ -36,7 +63,7 @@ class Workout extends Component {
                     fontFamily: 'SFProDisplay-Regular',
                 }}>Мой предстоящие тренировки</Text>
             }
-            renderItem={()=>(
+            renderItem={({item})=>(
                 <TouchableOpacity 
                     onPress={()=>{navigation.navigate('OpenWorkout')}}
                     style={{
@@ -59,7 +86,7 @@ class Workout extends Component {
                         justifyContent:'center',
                         alignItems: 'center'
                     }}>
-                        <Image source={basket} style={{
+                        <Image source={{uri: item.training_type.icon}} style={{
                             width: 25,
                             height: 25,
                             resizeMode: 'contain',
@@ -78,18 +105,18 @@ class Workout extends Component {
                             fontSize: 13,
                             color: '#000',
                             fontFamily: 'SFProDisplay-Regular',
-                        }}>Велотренировка</Text>
+                        }}>{item.title}</Text>
                         <Text style={{
                             fontSize: 11,
                             color: '#4f4f4f',
                             fontFamily: 'SFProDisplay-Regular',
-                        }}>ул.Габдуллина, д. 132</Text>
+                        }}>{item.address}</Text>
                         <Text style={{
                             fontSize: 15,
                             color: '#6FC716',
                             fontFamily: 'SFProDisplay-Regular',
                             marginTop: 5
-                        }}>2000 т</Text>
+                        }}>{item.price} т</Text>
                     </View>
                     <View style={{
                         justifyContent: 'space-around'
@@ -108,7 +135,7 @@ class Workout extends Component {
                                 fontSize: 11,
                                 marginRight: 5,
                                 fontFamily: 'SFProDisplay-Regular',
-                            }}>9/10</Text>
+                            }}>{item.subscriptions_count}/{item.athletes_count}</Text>
                             <Image source={profile} style={{
                                 width:8,
                                 height:8,
@@ -127,9 +154,11 @@ class Workout extends Component {
              }}>
                  <YellowBtn text='Создать тренировку' onPress={()=>{navigation.navigate('CreateWorkout')}} />
              </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
-
-export default Workout;
+const mapStateToProps = (state) =>({
+    token: state.appReducer.token,
+  })
+export default connect(mapStateToProps)(Workout);

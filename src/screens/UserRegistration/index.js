@@ -83,7 +83,7 @@ class UserRegister extends Component {
     this.state = {
         phone: '',
         cities: [],
-        city_selection: false,
+        city_selection: true,
         city: '',
         password: {
             value: '',
@@ -101,7 +101,9 @@ class UserRegister extends Component {
         },
         gender: 'M',
         trainingType: [],
-        visible: false
+        visible: false,
+        token: '',
+        city_id: 0
     };
   }
   componentDidMount=()=>{
@@ -122,7 +124,10 @@ class UserRegister extends Component {
       axios(config)
       .then( (response) => {
         this.setState({
-            cities: response.data
+            cities: response.data.map(i=>
+                i.id === i.id ?
+                {...i,selected: false}:
+                i)
         })
       })
       .catch(function (error) {
@@ -151,7 +156,7 @@ getTraningTypes=()=>{
       });
 }
 _start=()=>{
-    const {user,phone, password,date,city, gender} = this.state
+    const {user,phone, password,date,city_id, gender,trainingType,cities} = this.state
     var FormData = require('form-data');
     var data = new FormData();
     data.append('name', user.name);
@@ -160,11 +165,16 @@ _start=()=>{
     data.append('password', password.value);
     data.append('password_confirmation', password.confirmation);
     data.append('phone', phone);
-    data.append('city_id', '4');
+    cities.map(item=>{
+        item.selected && data.append('city_id', item.id);
+    })
+    
     data.append('gender', gender);
     data.append('birthday', `${date.day}-06-${date.year}`);
-    data.append('training_types[]', '2');
-
+    trainingType.map(item=>{
+        item.selected && data.append('training_types[]', item.id)
+    })
+    console.log(data)
     var config = {
     method: 'post',
     url: 'https://lepapp.com/api/register/athlete',
@@ -176,10 +186,32 @@ _start=()=>{
 
     axios(config)
     .then( (response)=> {
+        this.setState({
+            token: response.data.access_token
+        })
+        this.getCode(response.data.access_token)
         this.changeIndex()
         console.log(JSON.stringify(response.data));
     })
     .catch( (error)=> {
+    console.log(error);
+    });
+}
+getCode=(token)=>{
+    var axios = require('axios');
+    var config = {
+    method: 'post',
+    url: 'https://lepapp.com/api/confirmations/smsc',
+    headers: { 
+        'Authorization': `Bearer ${token}`
+    }
+    };
+
+    axios(config)
+    .then(function (response) {
+    console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
     console.log(error);
     });
 }
@@ -315,7 +347,14 @@ _start=()=>{
               <ScrollView>
               {
                   this.state.cities.map(item=>(
-                    <TouchableOpacity style={{
+                    <TouchableOpacity onPress={()=>{
+                        this.setState({
+                            cities: this.state.cities.map(i=>
+                                i.id === item.id ?
+                                {...i,selected:true}:
+                                {...i, selected: false})
+                        })
+                    }} style={{
                         flexDirection: 'row',
                         justifyContent:'space-between',
                         paddingHorizontal: 20,
@@ -325,9 +364,9 @@ _start=()=>{
                     }}>
                         <Text style={{
                             fontSize: 15,
-                            fontWeight: '600',
+                            fontWeight: item.selected?'600':'400',
                         }}>{item.name}</Text>
-                        <Image source={checkicon} style={{width: 20, height: 20, resizeMode:'contain', tintColor:'#6FC716'}} />
+                        {item.selected && <Image source={checkicon} style={{width: 20, height: 20, resizeMode:'contain', tintColor:'#6FC716'}} />}
                     </TouchableOpacity>
                   ))
               }

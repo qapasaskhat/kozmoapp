@@ -3,7 +3,8 @@ import { Text, View, TouchableOpacity } from 'react-native';
 
 const MoneyCard = ({
     params,
-    onPress
+    onPress,
+    balans
 }) => (
     <View style={{
         width:'100%',
@@ -20,7 +21,7 @@ const MoneyCard = ({
                 color: '#242424',
                 fontFamily: 'SFProDisplay-Regular',
                 fontWeight: 'normal',
-            }}>+ 15 700 т</Text>
+            }}>{balans} т</Text>
             <Text>Мой баланс</Text>
         </View>
         <TouchableOpacity onPress={onPress} style={{

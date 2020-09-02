@@ -7,7 +7,8 @@ import {
     Image,
     TouchableOpacity,
     Alert,
-    ScrollView
+    ScrollView,
+    Platform
 } from 'react-native'
 import Swiper from 'react-native-swiper'
 import CodeInput from 'react-native-confirmation-code-input'
@@ -143,12 +144,12 @@ class RegistrationSlider extends React.Component{
                 patronymic: ''
             },
             date:{
-                day: null,
+                day: 20,
                 month: null,
-                year: null
+                year: 1998
             },
             gender: 'M',
-            email: null,
+            email: '',
             photoSelfi: {
                 uri: null,
                 check: false
@@ -166,7 +167,7 @@ class RegistrationSlider extends React.Component{
             check:false,
             cities: [],
             city: '',
-            city_selection: false,
+            city_selection: true,
             trainingType: []
         }
       }
@@ -181,7 +182,10 @@ class RegistrationSlider extends React.Component{
           axios(config)
           .then( (response) => {
             this.setState({
-                cities: response.data
+                cities: response.data.map(i=>
+                    i.id === i.id ?
+                    {...i,selected: false}:
+                    i)
             })
           })
           .catch(function (error) {
@@ -236,7 +240,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     photoUds:{
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     },
                 })
@@ -256,7 +260,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     photoUds:{
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     },
                 })
@@ -276,7 +280,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     photoSelfi:{
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     },
                 })
@@ -296,7 +300,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     photoSelfi:{
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     },
                 })
@@ -316,7 +320,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 let arr = this.state.photo
                 let obj = {
-                    uri: response.uri
+                    uri: Platform.OS==='ios'? response.uri : 'file://'+response.path
                 }
                 arr.push(obj)
                 this.setState({
@@ -338,7 +342,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 let arr = this.state.photo
                 let obj = {
-                    uri: response.uri
+                    uri: Platform.OS==='ios'? response.uri : 'file://'+response.path
                 }
                 arr.push(obj)
                 this.setState({
@@ -360,7 +364,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     avatar: {
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     }
                 })
@@ -368,7 +372,6 @@ class RegistrationSlider extends React.Component{
         })
     }
     shotAvatar=()=>{
-
         ImagePicker.launchCamera(options,(response)=>{
             console.log('shotPhotoPassport', response.uri)
             if (response.didCancel) {
@@ -381,7 +384,7 @@ class RegistrationSlider extends React.Component{
                 const source = { uri: response.uri };
                 this.setState({
                     avatar: {
-                        uri: response.uri,
+                        uri: Platform.OS==='ios'? response.uri : 'file://'+response.path,
                         check: true
                     }
                 })
@@ -583,7 +586,7 @@ class RegistrationSlider extends React.Component{
             <View style={{
                 backgroundColor: '#fff',
                 marginHorizontal: '10%',
-                height: 400,
+                height: '50%',
                 shadowColor: "#000",
                 shadowOffset: {
                     width: 0,
@@ -597,7 +600,14 @@ class RegistrationSlider extends React.Component{
             }}>
                 <ScrollView>{
                 this.state.cities.map(item=>(
-                    <TouchableOpacity onPress={()=>{}} style={{
+                    <TouchableOpacity onPress={()=>{
+                        this.setState({
+                            cities: this.state.cities.map(i=>
+                                i.id === item.id ?
+                                {...i,selected:true}:
+                                {...i, selected: false})
+                        })
+                    }} style={{
                         flexDirection: 'row',
                         justifyContent:'space-between',
                         paddingHorizontal: 20,
@@ -607,9 +617,9 @@ class RegistrationSlider extends React.Component{
                     }}>
                         <Text style={{
                             fontSize: 15,
-                            fontWeight: '600',
+                            fontWeight: item.selected ?'600': '400',
                         }}>{item.name}</Text>
-                        <Image source={checkicon} style={{width: 20, height: 20, resizeMode:'contain', tintColor:'#6FC716'}} />
+                        {item.selected && <Image source={checkicon} style={{width: 20, height: 20, resizeMode:'contain', tintColor:'#6FC716'}} />}
                     </TouchableOpacity>
                 ))
             }</ScrollView>
@@ -856,6 +866,7 @@ class RegistrationSlider extends React.Component{
                     height: '50%',
                     borderRadius: 11
                 }}>
+                    <ScrollView>
                     {
                         array.map(item=>(
                             <TouchableOpacity onPress={()=>{
@@ -878,7 +889,7 @@ class RegistrationSlider extends React.Component{
                                 <Text style={{textAlign: 'center'}}>{item.name}</Text>
                             </TouchableOpacity>
                         ))
-                    }
+                    }</ScrollView>
                 </View>
             </Modal>
             <View style={{
@@ -943,8 +954,7 @@ class RegistrationSlider extends React.Component{
                 <YellowBtn text='Далее' onPress={onpress} icon iconName ={next} />
              </View>
         </View>
-    )
-     
+    )  
      Slider8= ({onpress,check,takePhotoPasport,shotPhotoPassport})=>(//УДОСТОВЕРЕНИЕ
         <View style={styles.container}>
             <Header text='УДОСТОВЕРЕНИЕ' />
@@ -1436,7 +1446,69 @@ class RegistrationSlider extends React.Component{
         </View>
     )
     _finishRegistration=()=>{
-        this.changeIndex(1) 
+        const { phone, password, user, email, photo, photoSelfi, photoUds,about, avatar , gender, date, trainingType, cities} = this.state
+        var FormData = require('form-data');
+        var data = new FormData();
+        const fileSelfi={}
+        fileSelfi.name = `photo_1.jpeg`
+        fileSelfi.type = 'image/jpeg'
+        fileSelfi.uri = photoSelfi.uri//.replace('/','')
+        const fileAva={}
+        fileAva.name = `photo_2.jpeg`
+        fileAva.type = 'image/jpeg'
+        fileAva.uri = avatar.uri//.replace('/','')
+        const filePasport={}
+        filePasport.name = `photo_4.jpeg`
+        filePasport.type = 'image/jpeg' 
+        filePasport.uri = photoUds.uri//.replace('/','')
+        data.append('name', user.name);
+        data.append('password', password.value);
+        data.append('password_confirmation', password.confirmation);
+        photo.map(item=>{
+            const  file={}
+            file.name = `photo_3.jpeg`
+            file.type = 'image/jpeg'
+            file.uri = item.uri//.replace('/','')
+            data.append('certificates[]',file );
+        })
+        data.append('phone', '77007811112');
+        data.append('id_image', filePasport);
+        data.append('selfie_id_image', fileSelfi);
+        data.append('avatar', fileAva);
+        data.append('email', email)
+        data.append('about', about);
+        data.append('gender', gender);
+        data.append('birthday', `${date.day}-12-${date.year}`);
+        trainingType.map(item=>{
+            item.selected && data.append('training_types[]', item.id);
+        })
+        cities.map(item=>{
+            item.selected && data.append('city_id', item.id)
+        })
+        data.append('last_name', user.name);
+        data.append('middle_name', user.patronymic);
+        console.log(data)
+        var config = {
+        method: 'post',
+        url: 'https://lepapp.com/api/register/coach',
+        headers: { 
+            'Accept': 'application/json', 
+            'Content-Type': 'application/x-www-form-urlencoded', 
+        },
+        data : data
+        };
+        setTimeout(() => {
+            axios(config)
+        .then(function (response) {
+            this.changeIndex() 
+            console.log(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+        console.log( error.response);
+        });
+        }, 300);
+        
+        
     }
     goTo=()=>{
         this.state.value ? 

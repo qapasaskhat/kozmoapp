@@ -15,7 +15,7 @@ const InstCategory = ({params, add,items}) => (
       data={items}
       renderItem={({item}) => (
         <View style={styles.interest}>
-          <Image source={item.img} style={styles.img} />
+          <Image source={{uri: item.icon}} style={styles.img} />
         </View>
       )}
     />

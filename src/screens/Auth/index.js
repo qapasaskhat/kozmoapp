@@ -6,13 +6,14 @@ import {YellowBtn, GrayBtn} from '../../components/Button/index';
 import axios from 'axios'
 import {apiUri} from '../../api'
 import Modal from 'react-native-modal'
+import {connect} from 'react-redux'
 
-export default class Auth extends Component {
+class Auth extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      phone: '87007007070',
-      password: '12345678',
+      phone: '',
+      password: '',
       loading: false
     };
 
@@ -41,7 +42,9 @@ export default class Auth extends Component {
       this.setState({
         loading: false
       })
+      this.props.dispatch({type: 'ACCESS_TOKEN', payload: response.data.access_token} )
       response.data.role === 'coach' && this.props.navigation.navigate('InstMain')
+      response.data.role === 'athlete' && this.props.navigation.navigate('Main')
     })
     .catch( (error)=> {
       console.warn(error)
@@ -152,3 +155,9 @@ export default class Auth extends Component {
     );
   }
 }
+const mapStateToProps = (state) =>({
+})
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+});
+export default connect(mapStateToProps,mapDispatchToProps)(Auth)
